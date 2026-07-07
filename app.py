@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import requests
@@ -7,8 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-API_KEY = "sk-or-v1-8388c28ae03c2cf677c73e9040c1c74013b7296b71"
-
+API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 url = "https://openrouter.ai/api/v1/chat/completions"
 
