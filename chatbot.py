@@ -1,21 +1,17 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from dotenv import load_dotenv
+import os
 import requests
 
+load_dotenv()
 
-app = Flask(__name__)
-CORS(app)
+API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-
-# OpenRouter API Key
-API_KEY = "sk-or-v1-83887c73e9040c1c74013b7296b71"
-
+url = "https://openrouter.ai/api/v1/chat/completions"
 
 headers = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"
 }
-
 
 messages = [
     {
@@ -25,23 +21,17 @@ messages = [
 ]
 
 
-@app.route("/chat", methods=["POST"])
-def chat():
-
-    user_message = request.json["message"]
-
+def get_response(user_message):
 
     messages.append({
-        "role":"user",
-        "content":user_message
+        "role": "user",
+        "content": user_message
     })
 
-
     data = {
-        "model":"openai/gpt-4o-mini",
-        "messages":messages
+        "model": "openai/gpt-4o-mini",
+        "messages": messages
     }
-
 
     response = requests.post(
         url,
@@ -49,22 +39,13 @@ def chat():
         json=data
     )
 
-
     result = response.json()
-
 
     answer = result["choices"][0]["message"]["content"]
 
-
     messages.append({
-        "role":"assistant",
-        "content":answer
+        "role": "assistant",
+        "content": answer
     })
 
-
-    return jsonify({
-        "reply":answer
-    })
-
-
-app.run(debug=True)
+    return answer
